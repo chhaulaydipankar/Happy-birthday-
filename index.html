@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Bina!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            background: radial-gradient(circle, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cursive {
+            font-family: 'Dancing+Script', cursive;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .balloon {
+            position: absolute;
+            bottom: -100px;
+            width: 40px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 6s linear infinite;
+            z-index: 1;
+        }
+
+        .hidden-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .show-content {
+            display: flex;
+            opacity: 1;
+        }
+
+        .surprise-btn {
+            background: #ff4d6d;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .surprise-btn:active {
+            transform: scale(0.9);
+        }
+
+        .bina-photo {
+            border: 8px solid white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: rotate(-3deg);
+            transition: transform 0.5s ease;
+        }
+
+        .bina-photo:hover {
+            transform: rotate(0deg) scale(1.05);
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 50;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="text-center z-10 p-6">
+        <div class="mb-8 animate-bounce text-6xl">🎁</div>
+        <h1 class="text-3xl font-bold text-white mb-6 drop-shadow-md">Bina-r jonno ekta surprise ache!</h1>
+        <button onclick="revealSurprise()" class="surprise-btn text-white px-8 py-4 rounded-full font-bold text-xl cursor-pointer">
+            Tap Koro 🎈
+        </button>
+    </div>
+
+    <!-- Surprise Content -->
+    <div id="main-content" class="hidden-content flex-col items-center justify-center text-center p-4 z-20 max-w-lg w-full">
+        <h1 class="cursive text-5xl md:text-7xl text-white mb-6 drop-shadow-lg animate-pulse">
+            Happy Birthday Bina!
+        </h1>
+        
+        <div class="relative mb-6">
+            <!-- replace 'bina.jpg' with your actual filename if you upload to github -->
+            <img src="9a2eaa88-4454-43a8-9b3e-8a5ec1e96799-1_all_2635.jpg" 
+                 alt="Bina" 
+                 class="bina-photo w-64 h-80 object-cover rounded-lg mx-auto"
+                 onerror="this.src='https://via.placeholder.com/300x400?text=Bina+Birthday'">
+        </div>
+
+        <div class="bg-white/30 backdrop-blur-md p-6 rounded-2xl text-white shadow-xl">
+            <p class="text-lg font-medium leading-relaxed italic">
+                "Tomar ei din-ti hok onek shundor ebong anondomoy. 
+                Sob somoy hashi-khushi thako, eta-i kamona kori."
+            </p>
+            <div class="mt-4 text-2xl">✨🎂🍰🎈✨</div>
+        </div>
+    </div>
+
+    <script>
+        // Confetti Logic
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let pieces = [];
+
+        function createPiece() {
+            return {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height - canvas.height,
+                size: Math.random() * 10 + 5,
+                color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+                speed: Math.random() * 3 + 2,
+                rotation: Math.random() * 360
+            };
+        }
+
+        function updateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            pieces.forEach((p, i) => {
+                p.y += p.speed;
+                p.rotation += 2;
+                if (p.y > canvas.height) pieces[i] = createPiece();
+                ctx.fillStyle = p.color;
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation * Math.PI / 180);
+                ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                ctx.restore();
+            });
+            requestAnimationFrame(updateConfetti);
+        }
+
+        function revealSurprise() {
+            document.getElementById('start-screen').style.display = 'none';
+            const content = document.getElementById('main-content');
+            content.classList.add('show-content');
+            
+            // Start Confetti
+            for(let i=0; i<100; i++) pieces.push(createPiece());
+            updateConfetti();
+
+            // Floating Balloons
+            setInterval(() => {
+                const b = document.createElement('div');
+                b.className = 'balloon';
+                b.style.left = Math.random() * 100 + 'vw';
+                b.style.background = `hsl(${Math.random() * 360}, 70%, 70%)`;
+                document.body.appendChild(b);
+                setTimeout(() => b.remove(), 6000);
+            }, 500);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
+
